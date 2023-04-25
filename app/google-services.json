@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "544587762256",
+    "firebase_url": "https://teacher-8076c-default-rtdb.firebaseio.com",
+    "project_id": "teacher-8076c",
+    "storage_bucket": "teacher-8076c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544587762256:android:ebe14aeedb2d9b45c9df55",
+        "android_client_info": {
+          "package_name": "com.example.forteatchers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544587762256-2r0ijqg1c4unelutidhabd3mkapm2tjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiN91YsRd3LsQocz9AYo1V3iIqY3EFmPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544587762256-2r0ijqg1c4unelutidhabd3mkapm2tjb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
