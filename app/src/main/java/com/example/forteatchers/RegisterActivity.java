@@ -73,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    sendEmailVer();
                     if(rbStudent.isChecked()){
                         FirebaseDatabase.getInstance().getReference("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(new User(etName.getText().toString(),etSurname.getText().toString(),etEmail.getText().toString(),"",false,
                                 FirebaseAuth.getInstance().getCurrentUser().getUid()));
@@ -83,6 +84,19 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Sign Up successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
+                    Toast.makeText(RegisterActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    void sendEmailVer(){
+        FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(RegisterActivity.this, "Check your Email to verify your account", Toast.LENGTH_SHORT).show();
+                }else{
                     Toast.makeText(RegisterActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

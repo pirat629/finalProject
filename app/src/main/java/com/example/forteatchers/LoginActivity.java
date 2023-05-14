@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!etUsername.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty())
-                    handleLogin();
+                        handleLogin();
                 else
                     Toast.makeText(LoginActivity.this, "field is null", Toast.LENGTH_SHORT).show();
             }
@@ -63,8 +63,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    getUsers();
-                    Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
+                    if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()){
+                        getUsers();
+                        Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(LoginActivity.this, "Check your Email to verify your account", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
                     Toast.makeText(LoginActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
