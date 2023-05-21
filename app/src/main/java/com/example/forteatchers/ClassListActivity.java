@@ -1,23 +1,30 @@
 package com.example.forteatchers;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,12 +40,13 @@ public class ClassListActivity extends AppCompatActivity {
     ListView listView;
     ProgressBar progressBar;
     String id;
-    ArrayAdapter<String> arrayAdapter;
+    UserAdapter adapter;
     ArrayList<String> listId;
     ArrayList<String> idUsers;
     ArrayList<String> ids;
     ArrayList<String> uriUser;
     ArrayList<String> name;
+    ArrayList<User> users;
     String className;
     boolean isTeacher;
 
@@ -103,15 +111,15 @@ public class ClassListActivity extends AppCompatActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(isTeacher){
-                    getUriUser(idUsers.get(i),i);
-
-                }
-            }
-        });
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                if(isTeacher){
+//                    getUriUser(idUsers.get(i),i);
+//
+//                }
+//            }
+//        });
 
     }
 
@@ -138,11 +146,12 @@ public class ClassListActivity extends AppCompatActivity {
         btnAddUsers = findViewById(R.id.btnAddUsers);
         listView = findViewById(R.id.listView);
         progressBar = findViewById(R.id.progressBar3);
+        users = new ArrayList<>();
         listId = new ArrayList<>();
         ids = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,listId);
+        adapter = new UserAdapter(this,R.layout.user_holder,users);
         idUsers = new ArrayList<>();
-        listView.setAdapter(arrayAdapter);
+        listView.setAdapter(adapter);
         uriUser = new ArrayList<>();
         name = new ArrayList<>();
     }
@@ -172,15 +181,17 @@ public class ClassListActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(listId.size()>0)listId.clear();
                 if(ids.size()>0)ids.clear();
+                if(users.size()>0)users.clear();
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     User user = dataSnapshot.getValue(User.class);
                     ids.add(user.email);
                     String id = user.id;
                     if(idUsers.contains(id)){
                         listId.add(user.name + " " + user.surname);
+                        users.add(user);
                     }
                 }
-                arrayAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
                 btnSetHomework.setVisibility(View.VISIBLE);
@@ -219,22 +230,43 @@ public class ClassListActivity extends AppCompatActivity {
         });
     }
 
-    void getUriUser(String idUser,int i){
-        FirebaseDatabase.getInstance().getReference("homeworkInClass").child(idUser).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds: snapshot.getChildren()){
-                    HomeworkInClass users = ds.getValue(HomeworkInClass.class);
-                    uriUser.add(users.url);
-                    name.add(users.name);
-                }
-                startActivity(new Intent(ClassListActivity.this,CheckHomeWorkActivity.class).putExtra("email",ids.get(i)).putExtra("uri",uriUser).putExtra("names",name));
-            }
+//    void getUriUser(String idUser,int i){
+//        FirebaseDatabase.getInstance().getReference("homeworkInClass").child(idUser).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot ds: snapshot.getChildren()){
+//                    HomeworkInClass users = ds.getValue(HomeworkInClass.class);
+//                    uriUser.add(users.url);
+//                    name.add(users.name);
+//                }
+//                startActivity(new Intent(ClassListActivity.this,CheckHomeWorkActivity.class).putExtra("email",ids.get(i)).putExtra("uri",uriUser).putExtra("names",name));
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+    class UserAdapter extends ArrayAdapter<User>{
 
+        public UserAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> objects) {
+            super(context, resource, objects);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            if (convertView == null){
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.user_holder,null);
             }
-        });
+            User user = getItem(position);
+            TextView name = convertView.findViewById(R.id.txtUserName);
+            ImageView photo = convertView.findViewById(R.id.imgPro);
+            Glide.with(ClassListActivity.this).load(user.profilePicture).placeholder(R.drawable.account_img).error(R.drawable.account_img).into(photo);
+            name.setText(user.name + " " + user.surname);
+            return convertView;
+        }
     }
 }
