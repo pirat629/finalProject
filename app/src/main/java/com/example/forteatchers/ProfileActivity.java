@@ -89,13 +89,14 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getImageInImageView() {
-        Bitmap bitmap = null;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imgPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        imgProfile.setImageBitmap(bitmap);
+//        Bitmap bitmap = null;
+//        try {
+//            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imgPath);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        imgProfile.setImageBitmap(bitmap);
+        Glide.with(ProfileActivity.this).load(imgPath).placeholder(R.drawable.account_img).error(R.drawable.account_img).into(imgProfile);
     }
 
     private void uploadImage(){
